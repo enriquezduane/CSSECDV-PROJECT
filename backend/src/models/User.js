@@ -31,9 +31,13 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    lastLogin: {
+    currentLogin: {
         type: Date,
-        default: Date.now,
+        default: null,
+    },
+    previousLogin: {
+        type: Date,
+        default: null,
     },
     securityQuestions: [
         {
@@ -46,12 +50,32 @@ const userSchema = new mongoose.Schema({
         },
     ],
 }, {
-    // Modify _id to id and remove __v
+    // Modify _id to id, remove __v, and format login dates
     toJSON: {
         transform: function(doc, ret) {
             ret.id = ret._id
             delete ret._id
             delete ret.__v
+
+            // Helper function to format dates in YYYY-MM-DD HH:MM (24-hour format)
+            const formatDate = (date) => {
+                const year = date.getFullYear()
+                const month = String(date.getMonth() + 1).padStart(2, '0')
+                const day = String(date.getDate()).padStart(2, '0')
+                const hours = String(date.getHours()).padStart(2, '0')
+                const minutes = String(date.getMinutes()).padStart(2, '0')
+                return `${year}-${month}-${day} ${hours}:${minutes}`
+            }
+
+            // Format login dates
+            if (ret.currentLogin) {
+                ret.currentLogin = formatDate(new Date(ret.currentLogin))
+            }
+
+            if (ret.previousLogin) {
+                ret.previousLogin = formatDate(new Date(ret.previousLogin))
+            }
+
             return ret
         },
     },
@@ -63,6 +87,18 @@ userSchema.methods.resetFailedAttempts = async function() {
     this.isLocked = false
     this.lockUntil = null
     await this.save()
+}
+
+userSchema.methods.formatDate = function(date) {
+    if (!date) return null
+
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`
 }
 
 // Hash password and security questions before saving to db
