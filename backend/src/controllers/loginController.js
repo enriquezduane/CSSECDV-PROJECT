@@ -31,6 +31,11 @@ exports.loginUser = async (req, res) => {
         // Reset failed attempts after successful login
         await user.resetFailedAttempts()
 
+        // Update login timestamps
+        user.previousLogin = user.currentLogin // Shift currentLogin to previousLogin
+        user.currentLogin = new Date() // Set currentLogin to now
+        await user.save()
+
         const token = await jwtHandler.signToken(user)
 
         res.status(200).json({
@@ -38,6 +43,7 @@ exports.loginUser = async (req, res) => {
             username: user.username,
             role: user.role,
             id: user.id,
+            previousLogin: user.formatDate(user.previousLogin),
         })
 
     } catch (error) {
