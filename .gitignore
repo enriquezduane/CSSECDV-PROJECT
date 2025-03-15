@@ -1,0 +1,32 @@
+# env variables
+backend/.env
+!.env.example
+
+# dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# build artifacts
+dist/
+build/
+public/build/
+
+# logs and caches (if exists)
+logs/
+*.log
+.cache/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.idea/
+.vscode/
+.aider*
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
