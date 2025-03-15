@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const handleDuplicateKeyError = require('../utils/errorHandler')
 
+const securityQuestionsList = require('../utils/securityQuestions')
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -33,6 +35,16 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    securityQuestions: [
+        {
+            question: {
+                type: String,
+                required: false,
+                enum: securityQuestionsList,
+            },
+            answerHash: { type: String, required: false },
+        },
+    ],
 }, {
     // Modify _id to id and remove __v
     toJSON: {
@@ -53,10 +65,52 @@ userSchema.methods.resetFailedAttempts = async function() {
     await this.save()
 }
 
-// hash password before saving to db
+// Hash password and security questions before saving to db
 userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next()
-    this.password = await bcrypt.hash(this.password, 10)
+    if (this.isModified('password')) {
+        this.password = await bcrypt.hash(this.password, 10)
+    }
+
+    if (this.isModified('securityQuestions')) {
+        this.securityQuestions = await Promise.all(
+            this.securityQuestions.map(async (q) => {
+                if (!q.answerHash || q.isModified) {
+                    return {
+                        question: q.question,
+                        answerHash: await bcrypt.hash(q.answerHash, 10), // Hash the answer
+                    }
+                }
+                return q // Skip already hashed answers
+            })
+        )
+    }
+    next()
+})
+
+
+userSchema.pre('findOneAndUpdate', async function(next) {
+    const update = this.getUpdate()
+
+    // Hash the password if it is being updated
+    if (update.password) {
+        update.password = await bcrypt.hash(update.password, 10)
+    }
+
+    // Hash security question answers if they are being updated
+    if (update.securityQuestions) {
+        update.securityQuestions = await Promise.all(
+            update.securityQuestions.map(async (q) => {
+                if (q.answerHash) {
+                    return {
+                        question: q.question,
+                        answerHash: await bcrypt.hash(q.answerHash, 10),
+                    }
+                }
+                return q
+            })
+        )
+    }
+
     next()
 })
 
