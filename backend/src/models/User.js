@@ -17,6 +17,22 @@ const userSchema = new mongoose.Schema({
         enum: ['cashier', 'manager'],
         required: true,
     },
+    failedAttempts: {
+        type: Number,
+        default: 0,
+    },
+    isLocked: {
+        type: Boolean,
+        default: false,
+    },
+    lockUntil: {
+        type: Date,
+        default: Date.now,
+    },
+    lastLogin: {
+        type: Date,
+        default: Date.now,
+    },
 }, {
     // Modify _id to id and remove __v
     toJSON: {
@@ -28,6 +44,14 @@ const userSchema = new mongoose.Schema({
         },
     },
 })
+
+// Middleware to reset failed attempts after successful login
+userSchema.methods.resetFailedAttempts = async function() {
+    this.failedAttempts = 0
+    this.isLocked = false
+    this.lockUntil = null
+    await this.save()
+}
 
 // hash password before saving to db
 userSchema.pre('save', async function(next) {
