@@ -7,10 +7,29 @@ exports.loginUser = async (req, res) => {
         const { username, password } = req.body
         const user = await User.findOne({ username })
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            // Unified failure message
+        if (!user) {
+            // Log failed attempt for non-existent user
             return res.status(401).json({ message: 'Invalid username and/or password' })
         }
+
+        if (user.isLocked && user.lockUntil > new Date()) {
+            return res.status(403).json({ message: 'Account is locked. Try again later.' })
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password)
+
+        if (!passwordMatch) {
+            user.failedAttempts += 1
+            if (user.failedAttempts >= 5) {
+                user.isLocked = true
+                user.lockUntil = new Date(Date.now() + 15 * 60 * 1000) // Lock for 15 minutes
+            }
+            await user.save()
+            return res.status(401).json({ message: 'Invalid username and/or password' })
+        }
+
+        // Reset failed attempts after successful login
+        await user.resetFailedAttempts()
 
         const token = await jwtHandler.signToken(user)
 
