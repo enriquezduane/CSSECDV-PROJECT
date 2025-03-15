@@ -7,14 +7,9 @@ exports.loginUser = async (req, res) => {
         const { username, password } = req.body
         const user = await User.findOne({ username })
 
-        if (!user) {
-            return res.status(401).json({ message: 'Username not found' })
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password)
-
-        if (!passwordMatch) {
-            return res.status(401).json({ message: 'Incorrect password' })
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            // Unified failure message
+            return res.status(401).json({ message: 'Invalid username and/or password' })
         }
 
         const token = await jwtHandler.signToken(user)
