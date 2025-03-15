@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const handleDuplicateKeyError = require('../utils/errorHandler')
 
+const securityQuestionsList = require('../utils/securityQuestions')
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -35,11 +37,14 @@ const userSchema = new mongoose.Schema({
     },
     securityQuestions: [
         {
-            question: { type: String, required: false },
+            question: {
+                type: String,
+                required: false,
+                enum: securityQuestionsList,
+            },
             answerHash: { type: String, required: false },
         },
     ],
-    
 }, {
     // Modify _id to id and remove __v
     toJSON: {
