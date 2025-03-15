@@ -65,7 +65,7 @@ userSchema.methods.resetFailedAttempts = async function() {
     await this.save()
 }
 
-// hash password before saving to db
+// Hash password and security questions before saving to db
 userSchema.pre('save', async function(next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 10)
@@ -84,6 +84,33 @@ userSchema.pre('save', async function(next) {
             })
         )
     }
+    next()
+})
+
+
+userSchema.pre('findOneAndUpdate', async function(next) {
+    const update = this.getUpdate()
+
+    // Hash the password if it is being updated
+    if (update.password) {
+        update.password = await bcrypt.hash(update.password, 10)
+    }
+
+    // Hash security question answers if they are being updated
+    if (update.securityQuestions) {
+        update.securityQuestions = await Promise.all(
+            update.securityQuestions.map(async (q) => {
+                if (q.answerHash) {
+                    return {
+                        question: q.question,
+                        answerHash: await bcrypt.hash(q.answerHash, 10),
+                    }
+                }
+                return q
+            })
+        )
+    }
+
     next()
 })
 
