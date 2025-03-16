@@ -48,8 +48,41 @@ const findUserByJwt = async (token) => {
     }
 }
 
+const protect = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1]
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized: No token provided' })
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await User.findById(decoded.id)
+
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized: User not found' })
+        }
+
+        req.user = user // Attach user info to the request object
+        next()
+    } catch (error) {
+        console.error('Authentication error:', error)
+        res.status(401).json({ message: 'Unauthorized: Invalid token' })
+    }
+}
+
+const authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'Forbidden: Insufficient permissions' })
+        }
+        next()
+    }
+} 
+
 module.exports = {
     signToken,
     verifyToken,
     findUserByJwt,
+    protect,
+    authorize
 }
