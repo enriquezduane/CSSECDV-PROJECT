@@ -15,21 +15,13 @@ export const registerLoader = async () => {
 
     return null
 }
-
 export const registerAction = async ({ request }) => {
-    const formData = await request.formData()
-
+    const formData = await request.formData();
     const userData = {
         username: formData.get('username'),
         password: formData.get('password'),
-        role: formData.get('role')
-    }
-
-    // Handle security questions if provided
-    const useSecurityQuestions = formData.get('useSecurityQuestions') === 'true'
-
-    if (useSecurityQuestions) {
-        userData.securityQuestions = [
+        role: formData.get('role'),
+        securityQuestions: [
             {
                 question: formData.get('question1'),
                 answerHash: formData.get('answer1')
@@ -39,15 +31,16 @@ export const registerAction = async ({ request }) => {
                 answerHash: formData.get('answer2')
             }
         ]
-    }
+    };
 
     try {
-        await createUser(userData)
-        return { success: true }
+        console.log(userData);
+        await createUser(userData);
+        return { success: true };
     } catch (error) {
         return {
             error: error.response?.data?.message || 'An error occurred during registration',
             values: userData
-        }
+        };
     }
 }
