@@ -5,6 +5,8 @@ const logger = require('./middleware/logger')
 const path = require('path')
 const routes = require('./routes')
 const errorHandler = require('./utils/errorHandler')
+const swaggerUi = require('swagger-ui-express')
+const swaggerSpecs = require('./swagger')
 
 require('dotenv').config()
 
@@ -24,6 +26,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/api', routes)
+
+// Serve Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
+    explorer: true,
+    swaggerOptions: {},
+}))
 
 const frontendPath = path.join(__dirname, '../../frontend/dist')
 
