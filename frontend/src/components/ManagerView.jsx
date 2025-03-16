@@ -43,6 +43,11 @@ function ManagerView() {
                         component={Link}
                         to="/manager/transaction-log"
                     />
+                    <NavLink
+                        label="Register Manager"
+                        component={Link}
+                        to="/manager/register"
+                    />
                     {/* add more links here */}
                 </Stack>
             </AppShell.Navbar>

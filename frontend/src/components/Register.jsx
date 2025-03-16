@@ -10,10 +10,8 @@ import {
     Group,
     Container,
     Divider,
-    Text,
+    Alert,
     Box,
-    Checkbox,
-    Alert
 } from '@mantine/core';
 import { Form, useActionData, useNavigation } from 'react-router-dom';
 
@@ -32,7 +30,6 @@ function RegisterForm() {
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
 
-    const [useSecurityQuestions, setUseSecurityQuestions] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(true);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -53,7 +50,7 @@ function RegisterForm() {
         <Container size="sm" my={40}>
             <Paper radius="md" p="xl" withBorder>
                 <Title order={2} ta="center" mt="md" mb={30}>
-                    Register New User
+                    Register New Manager
                 </Title>
 
                 {actionData?.error && (
@@ -64,11 +61,12 @@ function RegisterForm() {
 
                 {actionData?.success && (
                     <Alert title="Success" color="green" mb="lg">
-                        User registered successfully
+                        Manager registered successfully
                     </Alert>
                 )}
 
                 <Form method="post">
+                    <input type="hidden" name="role" value="manager" />
                     <Stack>
                         <TextInput
                             required
@@ -96,62 +94,41 @@ function RegisterForm() {
                             error={!passwordsMatch && confirmPassword !== '' && "Passwords don't match"}
                         />
 
-                        <Select
-                            label="Role"
-                            required
-                            name="role"
-                            data={[
-                                { value: 'cashier', label: 'Cashier' },
-                                { value: 'manager', label: 'Manager' },
-                            ]}
-                            defaultValue={actionData?.values?.role || 'cashier'}
-                        />
+                        <Box>
+                            <Divider label="Security Questions" labelPosition="center" my="md" />
 
-                        <Checkbox
-                            label="Set up security questions"
-                            checked={useSecurityQuestions}
-                            onChange={(event) => setUseSecurityQuestions(event.currentTarget.checked)}
-                            name="useSecurityQuestions"
-                            value={useSecurityQuestions}
-                        />
+                            <Group grow mb="md">
+                                <Select
+                                    label="Question 1"
+                                    placeholder="Select a question"
+                                    name="question1"
+                                    data={securityQuestionsList.map(q => ({ value: q, label: q }))}
+                                    required
+                                />
+                                <TextInput
+                                    label="Answer"
+                                    placeholder="Your answer"
+                                    name="answer1"
+                                    required
+                                />
+                            </Group>
 
-                        {useSecurityQuestions && (
-                            <Box>
-                                <Divider label="Security Questions" labelPosition="center" my="md" />
-
-                                <Group grow mb="md">
-                                    <Select
-                                        label="Question 1"
-                                        placeholder="Select a question"
-                                        name="question1"
-                                        data={securityQuestionsList.map(q => ({ value: q, label: q }))}
-                                        required={useSecurityQuestions}
-                                    />
-                                    <TextInput
-                                        label="Answer"
-                                        placeholder="Your answer"
-                                        name="answer1"
-                                        required={useSecurityQuestions}
-                                    />
-                                </Group>
-
-                                <Group grow mb="md">
-                                    <Select
-                                        label="Question 2"
-                                        placeholder="Select a question"
-                                        name="question2"
-                                        data={securityQuestionsList.map(q => ({ value: q, label: q }))}
-                                        required={useSecurityQuestions}
-                                    />
-                                    <TextInput
-                                        label="Answer"
-                                        placeholder="Your answer"
-                                        name="answer2"
-                                        required={useSecurityQuestions}
-                                    />
-                                </Group>
-                            </Box>
-                        )}
+                            <Group grow mb="md">
+                                <Select
+                                    label="Question 2"
+                                    placeholder="Select a question"
+                                    name="question2"
+                                    data={securityQuestionsList.map(q => ({ value: q, label: q }))}
+                                    required
+                                />
+                                <TextInput
+                                    label="Answer"
+                                    placeholder="Your answer"
+                                    name="answer2"
+                                    required
+                                />
+                            </Group>
+                        </Box>
 
                         <Button
                             type="submit"
@@ -159,7 +136,7 @@ function RegisterForm() {
                             loading={isSubmitting}
                             disabled={confirmPassword !== '' && !passwordsMatch}
                         >
-                            Register User
+                            Register Manager
                         </Button>
                     </Stack>
                 </Form>

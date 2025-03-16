@@ -25,12 +25,6 @@ const router = createBrowserRouter([
         loader: loginLoader,
     },
     {
-        path: '/register',
-        element: <Register />,
-        action: registerAction,
-        loader: registerLoader,
-    },
-    {
         path: '/cashier',
         element: <ProtectedRoute requiredRole="cashier"><Outlet /></ProtectedRoute>,
         loader: protectedLoader,
@@ -74,6 +68,12 @@ const router = createBrowserRouter([
                 path: 'dashboard',
                 element: <Dashboard />,
                 loader: statisticsLoader,
+            },
+            {
+                path: 'register',
+                element: <Register />,
+                action: registerAction,
+                loader: registerLoader,
             },
         ],
     },
