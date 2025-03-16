@@ -13,8 +13,10 @@ exports.loginUser = async (req, res) => {
         }
 
         if (user.isLocked && user.lockUntil > new Date()) {
-            return res.status(403).json({ message: 'Account is locked. Try again later.' })
+            const timeLeft = Math.ceil((user.lockUntil - new Date()) / 1000); // Time left in seconds
+            return res.status(403).json({ message: `Account locked. Try again in ${timeLeft} seconds` })
         }
+
 
         const passwordMatch = await bcrypt.compare(password, user.password)
 
