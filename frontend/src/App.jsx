@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom'
 import Login from './components/Login'
+import Register from './components/Register'
 import CashierView from './components/CashierView'
 import ManagerView from './components/ManagerView'
 import UserManagement from './components/UserManagement'
@@ -8,6 +9,7 @@ import TransactionLog from './components/TransactionLog'
 import Dashboard from './components/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { loginLoader, loginAction, logoutAction, rootLoader } from './routes/authRoutes'
+import { registerAction, registerLoader } from './routes/registerRoutes'
 import { protectedLoader } from './routes/protectedRoutes'
 import { userManagementLoader, userManagementAction } from './routes/userManagementRoutes'
 import { itemManagementLoader, itemManagementAction } from './routes/itemManagementRoutes'
@@ -21,6 +23,12 @@ const router = createBrowserRouter([
         element: <Login />,
         action: loginAction,
         loader: loginLoader,
+    },
+    {
+        path: '/register',
+        element: <Register />,
+        action: registerAction,
+        loader: registerLoader,
     },
     {
         path: '/cashier',

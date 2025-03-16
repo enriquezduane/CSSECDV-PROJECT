@@ -2,29 +2,43 @@ import axios from 'axios'
 
 const BASE_URL = '/api'
 
+// Create an axios instance with default headers
+const api = axios.create({
+    baseURL: BASE_URL
+})
+
+// Add an interceptor to include the auth token in all requests
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+})
+
 // users
-export const createUser = (userData) => axios.post(`${BASE_URL}/users`, userData)
-export const getAllUsers = () => axios.get(`${BASE_URL}/users`)
-export const getUserById = (id) => axios.get(`${BASE_URL}/users/${id}`)
-export const updateUser = (id, userData) => axios.put(`${BASE_URL}/users/${id}`, userData)
-export const deleteUser = (id) => axios.delete(`${BASE_URL}/users/${id}`)
+export const createUser = (userData) => api.post('/users', userData)
+export const getAllUsers = () => api.get('/users')
+export const getUserById = (id) => api.get(`/users/${id}`)
+export const updateUser = (id, userData) => api.put(`/users/${id}`, userData)
+export const deleteUser = (id) => api.delete(`/users/${id}`)
 
 // login
-export const loginUser = (username, password) => axios.post(`${BASE_URL}/login`, { username, password })
+export const loginUser = (username, password) => api.post('/login', { username, password })
 
 // items
-export const createItem = (itemData) => axios.post(`${BASE_URL}/menu-items`, itemData)
-export const getAllItems = () => axios.get(`${BASE_URL}/menu-items`)
-export const getItemById = (id) => axios.get(`${BASE_URL}/menu-items/${id}`)
-export const updateItem = (id, itemData) => axios.put(`${BASE_URL}/menu-items/${id}`, itemData)
-export const deleteItem = (id) => axios.delete(`${BASE_URL}/menu-items/${id}`)
+export const createItem = (itemData) => api.post('/menu-items', itemData)
+export const getAllItems = () => api.get('/menu-items')
+export const getItemById = (id) => api.get(`/menu-items/${id}`)
+export const updateItem = (id, itemData) => api.put(`/menu-items/${id}`, itemData)
+export const deleteItem = (id) => api.delete(`/menu-items/${id}`)
 
 // orders
-export const createOrder = (orderData) => axios.post(`${BASE_URL}/orders`, orderData)
-export const getAllOrders = () => axios.get(`${BASE_URL}/orders`)
-export const getOrderById = (id) => axios.get(`${BASE_URL}/orders/${id}`)
-export const updateOrder = (id, orderData) => axios.put(`${BASE_URL}/orders/${id}`, orderData)
-export const deleteOrder = (id) => axios.delete(`${BASE_URL}/orders/${id}`)
+export const createOrder = (orderData) => api.post('/orders', orderData)
+export const getAllOrders = () => api.get('/orders')
+export const getOrderById = (id) => api.get(`/orders/${id}`)
+export const updateOrder = (id, orderData) => api.put(`/orders/${id}`, orderData)
+export const deleteOrder = (id) => api.delete(`/orders/${id}`)
 
 // statistics
-export const getStatistics = () => axios.get(`${BASE_URL}/statistics`)
+export const getStatistics = () => api.get('/statistics')
