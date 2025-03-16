@@ -24,8 +24,9 @@ export const getUserById = (id) => api.get(`/users/${id}`)
 export const updateUser = (id, userData) => api.put(`/users/${id}`, userData)
 export const deleteUser = (id) => api.delete(`/users/${id}`)
 
-// login
+// user management
 export const loginUser = (username, password) => api.post('/login', { username, password })
+export const updatePassword = (id, passwordData) => api.put(`/users/${id}/password`, passwordData)
 
 // items
 export const createItem = (itemData) => api.post('/menu-items', itemData)

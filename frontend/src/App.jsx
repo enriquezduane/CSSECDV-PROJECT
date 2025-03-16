@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom'
 import Login from './components/Login'
 import Register from './components/Register'
+import Settings from './components/Settings'
 import CashierView from './components/CashierView'
 import ManagerView from './components/ManagerView'
 import UserManagement from './components/UserManagement'
@@ -10,6 +11,7 @@ import Dashboard from './components/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { loginLoader, loginAction, logoutAction, rootLoader } from './routes/authRoutes'
 import { registerAction, registerLoader } from './routes/registerRoutes'
+import { userSettingsLoader, updatePasswordAction } from './routes/userSettingsRoutes'
 import { protectedLoader } from './routes/protectedRoutes'
 import { userManagementLoader, userManagementAction } from './routes/userManagementRoutes'
 import { itemManagementLoader, itemManagementAction } from './routes/itemManagementRoutes'
@@ -74,6 +76,12 @@ const router = createBrowserRouter([
                 element: <Register />,
                 action: registerAction,
                 loader: registerLoader,
+            },
+            {
+                path: 'settings',
+                element: <Settings />,
+                loader: userSettingsLoader,
+                action: updatePasswordAction,
             },
         ],
     },

@@ -48,6 +48,11 @@ function ManagerView() {
                         component={Link}
                         to="/manager/register"
                     />
+                    <NavLink
+                        label="Settings"
+                        component={Link}
+                        to="/manager/settings"
+                    />
                     {/* add more links here */}
                 </Stack>
             </AppShell.Navbar>
