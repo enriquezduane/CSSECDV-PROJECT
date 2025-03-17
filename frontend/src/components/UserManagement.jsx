@@ -5,7 +5,6 @@ import {
     Title,
     TextInput,
     PasswordInput,
-    Select,
     Button,
     Group,
     Paper,
@@ -24,6 +23,9 @@ function UserManagement() {
     const [editingUser, setEditingUser] = useState(null)
     const [showNotification, setShowNotification] = useState(false)
     const submit = useSubmit()
+
+    // Filter to only show cashier users
+    const cashierUsers = users.filter(user => user.role === 'cashier')
 
     useEffect(() => {
         if (actionData?.message) {
@@ -47,11 +49,11 @@ function UserManagement() {
     }
     const openDeleteModal = (userId) => {
         modals.openConfirmModal({
-            title: 'Delete user',
+            title: 'Delete cashier',
             centered: true,
             children: (
                 <Text size="sm">
-                    Are you sure you want to delete this user? This action cannot be undone.
+                    Are you sure you want to delete this cashier? This action cannot be undone.
                 </Text>
             ),
             labels: { confirm: 'Delete', cancel: 'Cancel' },
@@ -77,10 +79,12 @@ function UserManagement() {
     return (
         <Container size="lg">
             <Paper shadow="xs" p="md" mb="xl" withBorder>
-                <Title order={3} mb="md">{editingUser ? 'Edit User' : 'Create User'}</Title>
+                <Title order={3} mb="md">{editingUser ? 'Edit Cashier' : 'Create Cashier'}</Title>
                 <Form method="post" onSubmit={handleSubmit}>
                     <input type="hidden" name="_action" value={editingUser ? 'update' : 'create'} />
                     {editingUser && <input type="hidden" name="id" value={editingUser.id} />}
+                    {/* Always set role to cashier */}
+                    <input type="hidden" name="role" value="cashier" />
 
                     {showNotification && (
                         <Alert
@@ -108,18 +112,6 @@ function UserManagement() {
                             placeholder="Enter password"
                             required={!editingUser}
                             error={actionData?.error?.password}
-
-                        />
-                        <Select
-                            name="role"
-                            label="Role"
-                            defaultValue={editingUser?.role || 'cashier'}
-                            data={[
-                                { value: 'cashier', label: 'Cashier' },
-                                { value: 'manager', label: 'Manager' },
-                            ]}
-                            error={actionData?.error?.role}
-
                         />
 
                         <Group justify="flex-end">
@@ -134,21 +126,19 @@ function UserManagement() {
                 </Form>
             </Paper>
             <Box mb="xl">
-                <Title order={3} mb="md">User List</Title>
+                <Title order={3} mb="md">Cashier List</Title>
                 <Table.ScrollContainer minWidth={500}>
                     <Table striped highlightOnHover>
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>Username</Table.Th>
-                                <Table.Th>Role</Table.Th>
                                 <Table.Th>Actions</Table.Th>
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {users.map(user => (
+                            {cashierUsers.map(user => (
                                 <Table.Tr key={user.id}>
                                     <Table.Td>{user.username}</Table.Td>
-                                    <Table.Td>{user.role}</Table.Td>
                                     <Table.Td>
                                         <Flex gap="xs">
                                             <Button size="compact-xs" onClick={() => setEditingUser(user)}>

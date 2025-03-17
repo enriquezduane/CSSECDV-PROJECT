@@ -11,24 +11,76 @@ const seedUsers = [
         username: 'cashier1',
         password: 'password123',
         role: 'cashier',
+
+        currentLogin: "2023-10-01T14:30:00Z",
+        previousLogin: "2023-09-30T10:15:00Z",
+        securityQuestions: [
+            {
+                question: "What is your favorite color?",
+                answerHash: "1"
+            },
+            {
+                question: "What is your pet's name?",
+                answerHash: "2"
+            }
+        ]
     },
     {
         _id: new mongoose.Types.ObjectId(),
         username: 'cashier2',
         password: 'password456',
         role: 'cashier',
+
+        currentLogin: "2023-10-01T14:30:00Z",
+        previousLogin: "2023-09-30T10:15:00Z",
+        securityQuestions: [
+            {
+                question: "What is your favorite color?",
+                answerHash: "1"
+            },
+            {
+                question: "What is your pet's name?",
+                answerHash: "2"
+            }
+        ]
     },
     {
         _id: new mongoose.Types.ObjectId(),
         username: 'manager1',
         password: 'managerpass123',
         role: 'manager',
+
+        currentLogin: "2023-10-01T14:30:00Z",
+        previousLogin: "2023-09-30T10:15:00Z",
+        securityQuestions: [
+            {
+                question: "What is your favorite color?",
+                answerHash: "1"
+            },
+            {
+                question: "What is your pet's name?",
+                answerHash: "2"
+            }
+        ]
     },
     {
         _id: new mongoose.Types.ObjectId(),
         username: 'manager2',
         password: 'managerpass456',
         role: 'manager',
+
+        currentLogin: "2023-10-01T14:30:00Z",
+        previousLogin: "2023-09-30T10:15:00Z",
+        securityQuestions: [
+            {
+                question: "What is your favorite color?",
+                answerHash: "1"
+            },
+            {
+                question: "What is your pet's name?",
+                answerHash: "2"
+            }
+        ]
     },
 ]
 
